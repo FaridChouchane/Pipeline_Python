@@ -4,6 +4,8 @@ import requests
 import json
 # Importe os pour gérer les dossiers et chemins.
 import os
+# Importe la fonction stockage_fichier depuis le fichier file_writing.py
+from file_writing.file_writing import stockage_fichier
 # Importe la fonction stocker_dans_bdd depuis le fichier db.py
 from bdd.db import stocker_dans_bdd
 
@@ -39,7 +41,7 @@ CREATE TABLE IF NOT EXISTS prix_instante_raw (
 )
 """
 # Chemin de la base DuckDB dans le dossier bdd.
-db_path = "bdd/conso_&_prix_energies_Fr.duckdb"
+db_path = "bdd/conso_et_prix_energies_Fr.duckdb"
 
 
 def telecharger_donnees_prix_carburant(url):
@@ -74,20 +76,6 @@ def telecharger_donnees_prix_carburant(url):
         if offset + step > 10000:
             break
     return toutes_les_data
-
-
-def stockage_fichier(toutes_les_data, json_path):
-    # Affiche un message pour indiquer qu'on va écrire le fichier JSON.
-    print("Stockage dans le fichier")
-    # Ouvre le fichier JSON en écriture dans le dossier data.
-    # encoding="utf-8" force l'encodage UTF-8.
-    with open(json_path, "w", encoding="utf-8") as f:
-        # Parcourt chaque ligne récupérée depuis l'API.
-        for line in toutes_les_data:
-            # Écrit chaque objet JSON sur une ligne du fichier.
-            json.dump(line, f, ensure_ascii=False)
-            # Ajoute un retour à la ligne pour avoir un fichier JSON ligne par ligne.
-            f.write("\n")
 
 resultat = telecharger_donnees_prix_carburant(url)
 stockage_fichier(resultat, json_path)
