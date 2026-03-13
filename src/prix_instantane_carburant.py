@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS prix_instante_raw (
 )
 """
 # Chemin de la base DuckDB dans le dossier bdd.
-db_path = "bdd/bdd_cours_python_avance.duckdb"
+db_path = "bdd/conso_&_prix_energies_Fr.duckdb"
 
 
 

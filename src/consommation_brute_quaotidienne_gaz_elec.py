@@ -39,7 +39,7 @@ CREATE OR REPLACE TABLE consommation_brute_quotidienne_gaz_elec_raw (
 )
 """
 # Chemin du fichier de base DuckDB dans le dossier bdd.
-db_path = "bdd/bdd_cours_python_avance.duckdb"
+db_path = "bdd/conso_&_prix_energies_Fr.duckdb"
 
 def telecharger_donnees_conso_gaz_elec(url):
      # Affiche un message dans le terminal pour indiquer le début du téléchargement.
