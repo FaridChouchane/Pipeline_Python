@@ -1,11 +1,12 @@
 # Importe la librairie requests pour appeler l'API HTTP.
 import requests
-# Importe duckdb pour créer et alimenter une base de données DuckDB.
-import duckdb
 # Importe json pour écrire les données récupérées dans un fichier JSON.
 import json
 # Importe os pour gérer les chemins et créer les dossiers si besoin.
 import os
+#Importe la fonction stocker_dans_bdd depuis le fichier db.py
+from bdd.db import stocker_dans_bdd
+
 
 # URL de l'API publique data.gouv.fr.
 # Elle récupère les données de consommation brute quotidienne gaz/électricité
@@ -17,6 +18,8 @@ os.makedirs("data", exist_ok=True)
 os.makedirs("bdd", exist_ok=True)
 # Chemin du fichier JSON généré dans le dossier data.
 json_path = "data/consommation_brute_quotidienne_gaz_elec.json"
+# nom de la table d'acceuil des datas conso brute quotidienne gaz & elec dans la bdd
+nom_table = "consommation_brute_quotidienne_gaz_elec_raw"
 
 
 # Requête SQL de création de table.
@@ -73,25 +76,7 @@ def stockage_fichier(toutes_les_data, json_path):
             # Ajoute un retour à la ligne pour avoir un fichier JSON ligne par ligne.
             f.write("\n")
 
-def stocker_dans_bdd(sql_creation, json_path, db_path):
-    # Affiche un message pour indiquer le chargement dans la base.
-    print("Chargement dans la BDD")
-    # Ouvre ou crée la base DuckDB dans le dossier bdd.
-    connection = duckdb.connect(db_path)
-    # Exécute la création de la table dans DuckDB.
-    connection.sql(sql_creation)
-    # Insère dans la table toutes les lignes lues depuis le fichier JSON.
-    # read_json_auto lit automatiquement la structure du fichier.
-    connection.sql(
-        f"""
-        INSERT INTO consommation_brute_quotidienne_gaz_elec_raw
-        SELECT * FROM read_json_auto('{json_path}')
-        """)
-    # Ferme proprement la connexion à la base.
-    connection.close()
-    # Message final pour confirmer que tout est terminé.
-    print("Terminé : JSON dans data/ et base DuckDB dans bdd/")
 
 resultat = telecharger_donnees_conso_gaz_elec(url)
 stockage_fichier(resultat, json_path)
-stocker_dans_bdd(sql_creation, json_path, db_path)
+stocker_dans_bdd(sql_creation, json_path, db_path, nom_table)

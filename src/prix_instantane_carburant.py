@@ -1,11 +1,11 @@
 # Importe requests pour appeler l'API HTTP.
 import requests
-# Importe duckdb pour créer et alimenter la base de données.
-import duckdb
 # Importe json pour écrire les données dans un fichier JSON.
 import json
 # Importe os pour gérer les dossiers et chemins.
 import os
+# Importe la fonction stocker_dans_bdd depuis le fichier db.py
+from bdd.db import stocker_dans_bdd
 
 # URL de l'API.
 # {limit} et {offset} seront remplacés dynamiquement dans la boucle.
@@ -16,6 +16,8 @@ os.makedirs("data", exist_ok=True)
 os.makedirs("bdd", exist_ok=True)
 # Chemin du fichier JSON dans le dossier data.
 json_path = "data/prix_instantane_carburant.json"
+# nom de la table d'accueil des datas prix carburant dans la bdd
+nom_table = "prix_instante_raw"
 
 # Requête SQL de création de la table si elle n'existe pas déjà.
 sql_creation = """
@@ -38,7 +40,6 @@ CREATE TABLE IF NOT EXISTS prix_instante_raw (
 """
 # Chemin de la base DuckDB dans le dossier bdd.
 db_path = "bdd/conso_&_prix_energies_Fr.duckdb"
-
 
 
 def telecharger_donnees_prix_carburant(url):
@@ -65,7 +66,7 @@ def telecharger_donnees_prix_carburant(url):
         # Récupère le nombre total d'enregistrements disponibles.
         total_count = data['total_count']
         # Met à jour l'offset pour l'appel suivant.
-        offset += len(toutes_les_data) + 1
+        offset += len(data['results'])
         # Si on a tout récupéré, on arrête la boucle.
         if total_count - len(toutes_les_data) <= 0:
             break
@@ -73,6 +74,7 @@ def telecharger_donnees_prix_carburant(url):
         if offset + step > 10000:
             break
     return toutes_les_data
+
 
 def stockage_fichier(toutes_les_data, json_path):
     # Affiche un message pour indiquer qu'on va écrire le fichier JSON.
@@ -87,26 +89,6 @@ def stockage_fichier(toutes_les_data, json_path):
             # Ajoute un retour à la ligne pour avoir un fichier JSON ligne par ligne.
             f.write("\n")
 
-def stocker_dans_bdd(sql_creation, json_path, db_path):
-    # Affiche un message pour indiquer le chargement dans la base.
-    print("Chargement dans la BDD")
-    # Ouvre ou crée la base DuckDB dans le dossier bdd.
-    connection = duckdb.connect(db_path)
-    # Exécute la création de la table dans DuckDB.
-    connection.sql(sql_creation)
-    # Insère dans la table toutes les lignes lues depuis le fichier JSON.
-    # read_json_auto lit automatiquement la structure du fichier.
-    connection.sql(
-        f"""
-        INSERT INTO prix_instante_raw
-        SELECT * FROM read_json_auto('{json_path}')
-        """)
-    # Ferme proprement la connexion à la base.
-    connection.close()
-    # Message final pour confirmer que tout est terminé.
-    print("Terminé : JSON dans data/ et base DuckDB dans bdd/")
-
 resultat = telecharger_donnees_prix_carburant(url)
 stockage_fichier(resultat, json_path)
-stocker_dans_bdd(sql_creation, json_path, db_path)
-
+stocker_dans_bdd(sql_creation, json_path, db_path, nom_table)
