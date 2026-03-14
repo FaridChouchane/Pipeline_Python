@@ -1,5 +1,5 @@
 import json
-from configuration import Configuration
+from configuration import EconomieGouvConfiguration, DataGouvConfiguration
 
 def read_configuration():
     out = []
@@ -9,8 +9,12 @@ def read_configuration():
 
     for config in configuration:
         config["sql_creation"] = sql_finder(config["fichier_sql"])
-        out.append(Configuration(config))
-
+        if config["type_api"] == "economie_gouv":
+            out.append(EconomieGouvConfiguration(config))
+        elif config["type_api"] == "conso_gouv":
+            out.append(DataGouvConfiguration(config))
+        else:
+            raise ValueError(f"La clé type_api = {config['type_api']} n 'est pas connue")
     return out
 
 
