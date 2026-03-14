@@ -4,13 +4,15 @@
     "fichier_sql": "consommation_brute_quotidienne_gaz_elec.sql",
     "json_path": "data/consommation_brute_quotidienne_gaz_elec.json",
     "type_api": "conso_gouv",
-    "dataset": "cfc27ff9-1871-4ee8-be64-b9a290c06935"
+    "dataset": "cfc27ff9-1871-4ee8-be64-b9a290c06935",
+    "nom_table": "consommation_brute_quotidienne_gaz_elec_raw"
   },
   {
     "db_path": "bdd/conso_et_prix_energies_Fr.duckdb",
     "fichier_sql": "prix_instante_raw.sql",
     "json_path": "data/prix_instantane_carburant.json",
     "type_api": "economie_gouv",
-    "dataset": "prix-des-carburants-en-france-flux-instantane-v2"
+    "dataset": "prix-des-carburants-en-france-flux-instantane-v2",
+    "nom_table": "prix_instante_raw"
   }
 ]
