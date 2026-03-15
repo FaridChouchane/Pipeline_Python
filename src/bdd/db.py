@@ -25,3 +25,7 @@ def stocker_dans_bdd(sql_creation, json_path, db_path, nom_table):
 
     # Message final.
     print("Terminé : JSON dans data/ et base DuckDB dans bdd/")
+
+
+if __name__ == "__main__":
+    print("ceci est un test de stocker_dans_bdd")

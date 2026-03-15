@@ -1,8 +1,9 @@
 import requests
 import json
+import abc
 
 # ----------------------------------------------------------------------------------------
-class Configuration:
+class Configuration(abc.ABC):
 
     def __init__(self, input_config):
         self.input_config = input_config
